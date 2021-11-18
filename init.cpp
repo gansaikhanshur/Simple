@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <stdio.h>
 #include <stdlib.h>
+#include <map>
 
 bool hasEnding (std::string const &fullString, std::string const &ending) {
     if (fullString.length() >= ending.length()) {
@@ -13,14 +14,24 @@ bool hasEnding (std::string const &fullString, std::string const &ending) {
 }
 
 std::string returnOutputFormat(std::string &s, std::string file_path){
-	std::string output = "";
+    std::string output = "";
 
-	if (s == "WAV"){
-		output = ".wav";
-	}
+    std::map<std::string, std::string> my_map = {
+    { "WAV", ".wav" },
+    { "FLAC", ".flac" },
+    { "MP3", ".mp3" },
+    { "WMA", ".wma" },
+    { "AAC", ".aac" },
+    { "M4A", ".m4a" },
+    { "PCM", ".pcm" },
+    { "AIFF", ".aiff" },
+    { "OGG", ".ogg" }
+    };
 
-	output = file_path.substr(0, file_path.find(".")) + output;
-	return output;
+    output = my_map.find(s)->second;
+
+    output = file_path.substr(0, file_path.find(".")) + output;
+    return output;
 }
 
 int main()
