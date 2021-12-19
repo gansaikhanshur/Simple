@@ -34,14 +34,14 @@ std::string returnOutputFormat(std::string &s, std::string file_path){
     return output;
 }
 
-int main()
+int main(int argc, char* argv[])
 {
-    std::string path = "tmpdir";
+    std::string path = argv[1];
     for (const auto & entry : std::filesystem::directory_iterator(path))
 	{
-		std::string num_audio_channels = "1";
-		std::string sampling_freq = "8000";
-		std::string output_audio_format = "WAV";
+		std::string num_audio_channels = argv[2];
+		std::string sampling_freq = argv[3];
+		std::string output_audio_format = argv[4];
 
 		std::string input_file = entry.path();
 		std::string dest_file = returnOutputFormat(output_audio_format, input_file);
