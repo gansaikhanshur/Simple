@@ -29,6 +29,10 @@ if [[ $DEST_FILE == *".mp3" ]]; then
 	fi
 
 	if [[ $INPUT_FILE == *".pcm" ]]; then
+		# This will need improvements in the future
+		# When it directly gets converted to, for example, 8khz the playback speed slows down
+		# The workaround here is to convert it to 16khz and then MP3 to MP3
+
 		tmp_file=$INPUT_FILE.tmp.mp3
 		ffmpeg -ar 16000 -ac $NUM_AUDIO_CHANNELS -f s16le -i $INPUT_FILE -c:a libmp3lame $tmp_file
 		ffmpeg -i $tmp_file -ar $SAMPLING_FREQUENCY -ac $NUM_AUDIO_CHANNELS $DEST_FILE
