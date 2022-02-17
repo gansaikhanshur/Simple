@@ -46,3 +46,21 @@ if [[ $DEST_FILE == *".mp3" ]]; then
 		mv $tmp_file $INPUT_FILE
 	fi
 fi
+
+if [[ $DEST_FILE == *".flac" ]]; then
+
+	if [[ $INPUT_FILE =~ \.(aac|aiff|m4a|wav|ogg|wma) ]]; then
+		ffmpeg -i $INPUT_FILE -ar $SAMPLING_FREQUENCY -ac $NUM_AUDIO_CHANNELS -sample_fmt s16 -c:a flac $DEST_FILE
+	fi
+
+	if [[ $INPUT_FILE == *".pcm" ]]; then
+		ffmpeg -ar $SAMPLING_FREQUENCY -ac $NUM_AUDIO_CHANNELS -f s16le -i $INPUT_FILE -c:a flac $DEST_FILE
+	fi
+
+	if [[ $INPUT_FILE == *".flac" ]]; then
+		tmp_file=$INPUT_FILE.tmp.flac
+		ffmpeg -i $INPUT_FILE -ar $SAMPLING_FREQUENCY -ac $NUM_AUDIO_CHANNELS $tmp_file
+		rm $INPUT_FILE
+		mv $tmp_file $INPUT_FILE
+	fi
+fi
