@@ -54,11 +54,37 @@ if [[ $DEST_FILE == *".flac" ]]; then
 	fi
 
 	if [[ $INPUT_FILE == *".pcm" ]]; then
-		ffmpeg -ar $SAMPLING_FREQUENCY -ac $NUM_AUDIO_CHANNELS -f s16le -i $INPUT_FILE -c:a flac $DEST_FILE
+		# This will need improvements in the future
+		# When it directly gets converted to, for example, 8khz the playback speed slows down
+		# Temporarily keeping this at 16000
+		echo '$INPUT_FILE -> 16khz'
+		ffmpeg -ar 16000 -ac $NUM_AUDIO_CHANNELS -f s16le -i $INPUT_FILE -c:a flac $DEST_FILE
 	fi
 
 	if [[ $INPUT_FILE == *".flac" ]]; then
 		tmp_file=$INPUT_FILE.tmp.flac
+		ffmpeg -i $INPUT_FILE -ar $SAMPLING_FREQUENCY -ac $NUM_AUDIO_CHANNELS $tmp_file
+		rm $INPUT_FILE
+		mv $tmp_file $INPUT_FILE
+	fi
+fi
+
+if [[ $DEST_FILE == *".aac" ]]; then
+
+	if [[ $INPUT_FILE =~ \.(aiff|m4a|wav|ogg|wma|flac) ]]; then
+		ffmpeg -i $INPUT_FILE -ar $SAMPLING_FREQUENCY -ac $NUM_AUDIO_CHANNELS -c:a aac $DEST_FILE
+	fi
+
+	if [[ $INPUT_FILE == *".pcm" ]]; then
+		# This will need improvements in the future
+		# When it directly gets converted to, for example, 8khz the playback speed slows down
+		# Temporarily keeping this at 16000
+		echo '$INPUT_FILE -> 16khz'
+		ffmpeg -ar 16000 -ac $NUM_AUDIO_CHANNELS -f s16le -i $INPUT_FILE -c:a aac $DEST_FILE
+	fi
+
+	if [[ $INPUT_FILE == *".aac" ]]; then
+		tmp_file=$INPUT_FILE.tmp.aac
 		ffmpeg -i $INPUT_FILE -ar $SAMPLING_FREQUENCY -ac $NUM_AUDIO_CHANNELS $tmp_file
 		rm $INPUT_FILE
 		mv $tmp_file $INPUT_FILE
