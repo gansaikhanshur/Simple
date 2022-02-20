@@ -90,3 +90,27 @@ if [[ $DEST_FILE == *".aac" ]]; then
 		mv $tmp_file $INPUT_FILE
 	fi
 fi
+
+if [[ $DEST_FILE == *".wma" ]]; then
+
+	if [[ $INPUT_FILE =~ \.(aac|pcm|mp3|aiff|m4a|wav|ogg|flac) ]]; then
+		ffmpeg -i $INPUT_FILE -ar $SAMPLING_FREQUENCY -ac $NUM_AUDIO_CHANNELS $DEST_FILE
+	fi
+
+	if [[ $INPUT_FILE == *".wma" ]]; then
+		echo 'WMA to WMA is unnecessary: omitting $INPUT_FILE'
+	fi
+
+fi
+
+if [[ $DEST_FILE == *".aiff" ]]; then
+
+	if [[ $INPUT_FILE =~ \.(aac|pcm|mp3|wma|m4a|wav|ogg|flac) ]]; then
+		ffmpeg -i $INPUT_FILE -ar $SAMPLING_FREQUENCY -ac $NUM_AUDIO_CHANNELS $DEST_FILE
+	fi
+
+	if [[ $INPUT_FILE == *".aiff" ]]; then
+		echo 'AIFF to AIFF is unnecessary: omitting $INPUT_FILE'
+	fi
+
+fi
