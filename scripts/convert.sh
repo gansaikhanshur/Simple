@@ -136,7 +136,7 @@ if [[ $DEST_FILE == *".m4a" ]]; then
 	fi
 
 	if [[ $INPUT_FILE == *".pcm" ]]; then
-		ffmpeg -loglevel panic -f s16le -y -ar $SAMPLING_FREQUENCY -ac $NUM_AUDIO_CHANNELS -i $INPUT_FILE -ar $SAMPLING_FREQUENCY -ac $NUM_AUDIO_CHANNELS $DEST_FILE
+		ffmpeg -loglevel panic -f s16le -y -ar 16000 -ac $NUM_AUDIO_CHANNELS -i $INPUT_FILE -ar 16000 -ac $NUM_AUDIO_CHANNELS $DEST_FILE
 	fi
 fi
 
