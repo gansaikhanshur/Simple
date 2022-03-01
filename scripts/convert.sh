@@ -6,8 +6,17 @@ NUM_AUDIO_CHANNELS=$3	# mono, stereo, etc.
 SAMPLING_FREQUENCY=$4	# 8khz, 16khz,  etc.
 
 if [[ $DEST_FILE == *".wav" ]]; then
-	if [[ $INPUT_FILE =~ \.(aac|aiff|pcm) ]]; then
-		ffmpeg -f s16le -ac $NUM_AUDIO_CHANNELS -ar $SAMPLING_FREQUENCY -i $INPUT_FILE $DEST_FILE
+	if [[ $INPUT_FILE =~ \.(pcm) ]]; then
+		tmp_file=$INPUT_FILE.tmp.wav
+		ffmpeg -f s16le -ac $NUM_AUDIO_CHANNELS -ar 16000 -i $INPUT_FILE $tmp_file
+		ffmpeg -i $tmp_file -ar $SAMPLING_FREQUENCY -ac $NUM_AUDIO_CHANNELS $DEST_FILE
+		rm $tmp_file
+	fi
+	if [[ $INPUT_FILE =~ \.(aac|aiff) ]]; then
+		tmp_file=$INPUT_FILE.tmp.wav
+		ffmpeg -i $INPUT_FILE $tmp_file
+		ffmpeg -i $tmp_file -ac $NUM_AUDIO_CHANNELS -ar $SAMPLING_FREQUENCY $DEST_FILE
+		rm $tmp_file
 	fi
 
 	if [[ $INPUT_FILE =~ \.(flac|m4a|mp3|ogg|wma) ]]; then
@@ -17,8 +26,8 @@ if [[ $DEST_FILE == *".wav" ]]; then
 	if [[ $INPUT_FILE == *".wav" ]]; then
 		tmp_file=$INPUT_FILE.tmp.wav
 		ffmpeg -i $INPUT_FILE -ar $SAMPLING_FREQUENCY -ac $NUM_AUDIO_CHANNELS $tmp_file
-		rm $INPUT_FILE
-		mv $tmp_file $INPUT_FILE
+		mv $tmp_file $DEST_FILE
+		rm $tmp_file
 	fi
 fi
 
@@ -42,8 +51,8 @@ if [[ $DEST_FILE == *".mp3" ]]; then
 	if [[ $INPUT_FILE == *".mp3" ]]; then
 		tmp_file=$INPUT_FILE.tmp.mp3
 		ffmpeg -i $INPUT_FILE -ar $SAMPLING_FREQUENCY -ac $NUM_AUDIO_CHANNELS $tmp_file
-		rm $INPUT_FILE
-		mv $tmp_file $INPUT_FILE
+		mv $tmp_file $DEST_FILE
+		rm $tmp_file
 	fi
 fi
 
@@ -64,8 +73,8 @@ if [[ $DEST_FILE == *".flac" ]]; then
 	if [[ $INPUT_FILE == *".flac" ]]; then
 		tmp_file=$INPUT_FILE.tmp.flac
 		ffmpeg -i $INPUT_FILE -ar $SAMPLING_FREQUENCY -ac $NUM_AUDIO_CHANNELS $tmp_file
-		rm $INPUT_FILE
-		mv $tmp_file $INPUT_FILE
+		mv $tmp_file $DEST_FILE
+		rm $tmp_file
 	fi
 fi
 
@@ -86,8 +95,8 @@ if [[ $DEST_FILE == *".aac" ]]; then
 	if [[ $INPUT_FILE == *".aac" ]]; then
 		tmp_file=$INPUT_FILE.tmp.aac
 		ffmpeg -i $INPUT_FILE -ar $SAMPLING_FREQUENCY -ac $NUM_AUDIO_CHANNELS $tmp_file
-		rm $INPUT_FILE
-		mv $tmp_file $INPUT_FILE
+		mv $tmp_file $DEST_FILE
+		rm $tmp_file
 	fi
 fi
 
@@ -114,3 +123,30 @@ if [[ $DEST_FILE == *".aiff" ]]; then
 	fi
 
 fi
+
+if [[ $DEST_FILE == *".pcm" ]]; then
+	if [[ $INPUT_FILE =~ \.(aac|aiff|mp3|wma|m4a|wav|ogg|flac) ]]; then
+		ffmpeg -i $INPUT_FILE -ar $SAMPLING_FREQUENCY -ac $NUM_AUDIO_CHANNELS $DEST_FILE
+	fi
+fi
+
+if [[ $DEST_FILE == *".m4a" ]]; then
+	if [[ $INPUT_FILE =~ \.(aac|aiff|mp3|wma|wav|ogg|flac) ]]; then
+		ffmpeg -i $INPUT_FILE -ar $SAMPLING_FREQUENCY -ac $NUM_AUDIO_CHANNELS $DEST_FILE
+	fi
+
+	if [[ $INPUT_FILE == *".pcm" ]]; then
+		ffmpeg -loglevel panic -f s16le -y -ar $SAMPLING_FREQUENCY -ac $NUM_AUDIO_CHANNELS -i $INPUT_FILE -ar $SAMPLING_FREQUENCY -ac $NUM_AUDIO_CHANNELS $DEST_FILE
+	fi
+fi
+
+if [[ $DEST_FILE == *".ogg" ]]; then
+	if [[ $INPUT_FILE =~ \.(aac|aiff|mp3|wma|wav|m4a|flac) ]]; then
+		ffmpeg -i $INPUT_FILE -ar $SAMPLING_FREQUENCY -ac $NUM_AUDIO_CHANNELS $DEST_FILE
+	fi
+
+	if [[ $INPUT_FILE == *".pcm" ]]; then
+		ffmpeg -loglevel panic -f s16le -y -ar $SAMPLING_FREQUENCY -ac $NUM_AUDIO_CHANNELS -i $INPUT_FILE -ar $SAMPLING_FREQUENCY -ac $NUM_AUDIO_CHANNELS $DEST_FILE
+	fi
+fi
+

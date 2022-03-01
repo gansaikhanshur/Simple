@@ -10,6 +10,10 @@ NUM_AUDIO_CHANNELS=1			# mono (1), stereo (2), etc.
 SAMPLING_FREQUENCY=8000			# 8000, 16000, etc.
 OUTPUT_FORMAT=WAV				# supports -> WAV, MP3, M4A, FLAC, WMA, AAC, PCM, AIFF, OGG
 
+if [ ! -d $OUTPUT_DIR ]; then
+	mkdir -p $OUTPUT_DIR;
+fi
+
 g++ --std=c++17 scripts/init.cpp -o do-convert
 ./do-convert $INPUT_DIR $OUTPUT_DIR $NUM_AUDIO_CHANNELS $SAMPLING_FREQUENCY $OUTPUT_FORMAT 
 rm do-convert
