@@ -63,11 +63,10 @@ if [[ $DEST_FILE == *".flac" ]]; then
 	fi
 
 	if [[ $INPUT_FILE == *".pcm" ]]; then
-		# This will need improvements in the future
-		# When it directly gets converted to, for example, 8khz the playback speed slows down
-		# Temporarily keeping this at 16000
-		echo '$INPUT_FILE -> 16khz'
-		ffmpeg -ar 16000 -ac $NUM_AUDIO_CHANNELS -f s16le -i $INPUT_FILE -c:a flac $DEST_FILE
+		tmp_file=$INPUT_FILE.tmp.flac
+		ffmpeg -ar 16000 -ac $NUM_AUDIO_CHANNELS -f s16le -i $INPUT_FILE -c:a flac $tmp_file
+		ffmpeg -i $tmp_file -ar $SAMPLING_FREQUENCY -ac $NUM_AUDIO_CHANNELS $DEST_FILE
+		rm $tmp_file
 	fi
 
 	if [[ $INPUT_FILE == *".flac" ]]; then
@@ -80,16 +79,15 @@ fi
 
 if [[ $DEST_FILE == *".aac" ]]; then
 
-	if [[ $INPUT_FILE =~ \.(aiff|m4a|wav|ogg|wma|flac) ]]; then
+	if [[ $INPUT_FILE =~ \.(aiff|m4a|mp3|wav|ogg|wma|flac) ]]; then
 		ffmpeg -i $INPUT_FILE -ar $SAMPLING_FREQUENCY -ac $NUM_AUDIO_CHANNELS -c:a aac $DEST_FILE
 	fi
 
 	if [[ $INPUT_FILE == *".pcm" ]]; then
-		# This will need improvements in the future
-		# When it directly gets converted to, for example, 8khz the playback speed slows down
-		# Temporarily keeping this at 16000
-		echo '$INPUT_FILE -> 16khz'
-		ffmpeg -ar 16000 -ac $NUM_AUDIO_CHANNELS -f s16le -i $INPUT_FILE -c:a aac $DEST_FILE
+		tmp_file=$INPUT_FILE.tmp.aac
+		ffmpeg -ar 16000 -ac $NUM_AUDIO_CHANNELS -f s16le -i $INPUT_FILE $tmp_file
+		ffmpeg -i $tmp_file -ar $SAMPLING_FREQUENCY -ac $NUM_AUDIO_CHANNELS $DEST_FILE
+		rm $tmp_file
 	fi
 
 	if [[ $INPUT_FILE == *".aac" ]]; then
@@ -102,7 +100,7 @@ fi
 
 if [[ $DEST_FILE == *".wma" ]]; then
 
-	if [[ $INPUT_FILE =~ \.(aac|pcm|mp3|aiff|m4a|wav|ogg|flac) ]]; then
+	if [[ $INPUT_FILE =~ \.(aac|mp3|aiff|m4a|wav|ogg|flac) ]]; then
 		ffmpeg -i $INPUT_FILE -ar $SAMPLING_FREQUENCY -ac $NUM_AUDIO_CHANNELS $DEST_FILE
 	fi
 
@@ -110,16 +108,31 @@ if [[ $DEST_FILE == *".wma" ]]; then
 		echo 'WMA to WMA is unnecessary: omitting $INPUT_FILE'
 	fi
 
+	if [[ $INPUT_FILE == *".pcm" ]]; then
+		tmp_file=$INPUT_FILE.tmp.wma
+		ffmpeg -ar 16000 -ac $NUM_AUDIO_CHANNELS -f s16le -i $INPUT_FILE $tmp_file
+		ffmpeg -i $tmp_file -ar $SAMPLING_FREQUENCY -ac $NUM_AUDIO_CHANNELS $DEST_FILE
+		rm $tmp_file
+	fi
+
+
 fi
 
 if [[ $DEST_FILE == *".aiff" ]]; then
 
-	if [[ $INPUT_FILE =~ \.(aac|pcm|mp3|wma|m4a|wav|ogg|flac) ]]; then
+	if [[ $INPUT_FILE =~ \.(aac|mp3|wma|m4a|wav|ogg|flac) ]]; then
 		ffmpeg -i $INPUT_FILE -ar $SAMPLING_FREQUENCY -ac $NUM_AUDIO_CHANNELS $DEST_FILE
 	fi
 
 	if [[ $INPUT_FILE == *".aiff" ]]; then
 		echo 'AIFF to AIFF is unnecessary: omitting $INPUT_FILE'
+	fi
+
+	if [[ $INPUT_FILE == *".pcm" ]]; then
+		tmp_file=$INPUT_FILE.tmp.aiff
+		ffmpeg -ar 16000 -ac $NUM_AUDIO_CHANNELS -f s16le -i $INPUT_FILE $tmp_file
+		ffmpeg -i $tmp_file -ar $SAMPLING_FREQUENCY -ac $NUM_AUDIO_CHANNELS $DEST_FILE
+		rm $tmp_file
 	fi
 
 fi
@@ -145,8 +158,16 @@ if [[ $DEST_FILE == *".ogg" ]]; then
 		ffmpeg -i $INPUT_FILE -ar $SAMPLING_FREQUENCY -ac $NUM_AUDIO_CHANNELS $DEST_FILE
 	fi
 
-	if [[ $INPUT_FILE == *".pcm" ]]; then
-		ffmpeg -loglevel panic -f s16le -y -ar $SAMPLING_FREQUENCY -ac $NUM_AUDIO_CHANNELS -i $INPUT_FILE -ar $SAMPLING_FREQUENCY -ac $NUM_AUDIO_CHANNELS $DEST_FILE
+	if [[ $INPUT_FILE == *".ogg" ]]; then
+		cp $INPUT_FILE $DEST_FILE
 	fi
+
+	if [[ $INPUT_FILE == *".pcm" ]]; then
+		tmp_file=$INPUT_FILE.tmp.ogg
+		ffmpeg -ar 16000 -ac $NUM_AUDIO_CHANNELS -f s16le -i $INPUT_FILE $tmp_file
+		ffmpeg -i $tmp_file -ar $SAMPLING_FREQUENCY -ac $NUM_AUDIO_CHANNELS $DEST_FILE
+		rm $tmp_file
+	fi
+
 fi
 
