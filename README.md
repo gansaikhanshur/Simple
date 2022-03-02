@@ -1,4 +1,4 @@
-<img src="img/sumple_logo.png" alt="logo" width="960" height="540"/>
+![logo](img/simple_logo.png =960x540)
 
 [![Last Commit](https://img.shields.io/github/last-commit/gansaikhanshur/Simple)](https://img.shields.io/github/last-commit/gansaikhanshur/Simple)
 
