@@ -1,4 +1,4 @@
-![logo](img/simple_logo.png =960x540)
+![logo](img/simple_logo.png)
 
 [![Last Commit](https://img.shields.io/github/last-commit/gansaikhanshur/Simple)](https://img.shields.io/github/last-commit/gansaikhanshur/Simple)
 
