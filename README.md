@@ -4,7 +4,7 @@
 
 `simple` is the easiest way to convert audio files into your desired format.
 
-![GIF demo](img/demo1.mov)
+![GIF demo](img/)
 
 **Usage**
 ---
